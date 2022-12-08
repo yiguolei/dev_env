@@ -18,28 +18,28 @@
 
 ####################################################################
 # This script is used to build and package Doris
-
+doris_version=1.1.3
+export JAVA_HOME=/mnt/disk2/ygl/installs/jdk1.8.0_131
+export PATH=$JAVA_HOME/bin:$PATH
+rm -rf doris_release && mkdir -p doris_release &&
 
 # build with avx2 
 # clear all thirdparty builds, and rebuild all thirdparties and sources
 rm -rf thirdparty/* && git reset --hard
+rm -rf output/*
+sh build.sh --clean &&
+BUILD_META_TOOL=ON USE_AVX2=1 sh build.sh &&
 
-export JAVA_HOME=/mnt/disk2/ygl/installs/jdk-11.0.13
-export PATH=$JAVA_HOME/bin:$PATH
-BUILD_META_TOOL=ON STRIP_DEBUG_INFO=ON sh build.sh --fe --be --broker --clean && rm -rf output/be/lib/debug_info && cp NOTICE.txt output/ && cp dist/LICENSE-dist.txt output/ && cp -r dist/licenses output/ && mv output avx-jdk11
-
-export JAVA_HOME=/mnt/disk2/ygl/installs/jdk1.8.0_131
-export PATH=$JAVA_HOME/bin:$PATH
-BUILD_META_TOOL=ON STRIP_DEBUG_INFO=ON sh build.sh --fe --be --broker --clean && rm -rf output/be/lib/debug_info && cp NOTICE.txt output/ && cp dist/LICENSE-dist.txt output/ && cp -r dist/licenses output/ && mv output avx-jdk8
+mv output/fe doris_release/apache-doris-fe-$doris_version-bin &&
+mv output/apache_hdfs_broker doris_release/apache-doris-fe-$doris_version-bin &&
+mv output/audit_loader doris_release/apache-doris-fe-$doris_version-bin &&
+mv output/be doris_release/apache-doris-be-$doris_version-bin-x86_64 &&
 
 # build without avx2
 # clear all thirdparty builds
 rm -rf thirdparty/* && git reset --hard
+rm -rf output
+sh build.sh --clean &&
+BUILD_META_TOOL=ON USE_AVX2=0 sh build.sh &&
 
-export JAVA_HOME=/mnt/disk2/ygl/installs/jdk-11.0.13
-export PATH=$JAVA_HOME/bin:$PATH
-BUILD_META_TOOL=ON USE_AVX2=0 STRIP_DEBUG_INFO=ON sh build.sh --fe --be --broker --clean && rm -rf output/be/lib/debug_info && cp NOTICE.txt output/ && cp dist/LICENSE-dist.txt output/ && cp -r dist/licenses output/ && mv output noavx-jdk11
-
-export JAVA_HOME=/mnt/disk2/ygl/installs/jdk1.8.0_131
-export PATH=$JAVA_HOME/bin:$PATH
-BUILD_META_TOOL=ON USE_AVX2=0 STRIP_DEBUG_INFO=ON sh build.sh --fe --be --broker --clean && rm -rf output/be/lib/debug_info && cp NOTICE.txt output/ && cp dist/LICENSE-dist.txt output/ && cp -r dist/licenses output/ && mv output noavx-jdk8
+mv output/be doris_release/apache-doris-be-$doris_version-bin-x86_64-noavx2 
