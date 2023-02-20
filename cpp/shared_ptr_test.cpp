@@ -39,9 +39,18 @@ int main() {
         std::cout << voidperson.use_count() << std::endl;
         std::shared_ptr<Person> voidperson2 = voidperson;
         std::cout << voidperson.use_count() << std::endl;
+        // Assign to value will only changed voidperson2's pointer not voidperson's
+        voidperson2 = std::make_shared<Person>(13);
+        std::cout << voidperson2->age_ << std::endl;
+        std::cout << voidperson->age_ << std::endl;
         // Reference will not increase use count
         std::shared_ptr<Person>& voidperson3 = voidperson;
         std::cout << voidperson.use_count() << std::endl;
+        // Assign to reference will change both voidperson3 and void person
+        voidperson3 = std::make_shared<Person>(11);
+        std::cout << voidperson3->age_ << std::endl;
+        std::cout << voidperson->age_ << std::endl;
+
         std::shared_ptr<Person> voidperson4 = voidperson;
         std::cout << voidperson.use_count() << std::endl;
         
