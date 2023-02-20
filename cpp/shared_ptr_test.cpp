@@ -34,4 +34,16 @@ int main() {
         std::cout << p.use_count() << std::endl;
     }
     std::cout << "end test" << std::endl;
+    {
+        std::shared_ptr<Person> voidperson = std::make_shared<Person>(10);
+        std::cout << voidperson.use_count() << std::endl;
+        std::shared_ptr<Person> voidperson2 = voidperson;
+        std::cout << voidperson.use_count() << std::endl;
+        // Reference will not increase use count
+        std::shared_ptr<Person>& voidperson3 = voidperson;
+        std::cout << voidperson.use_count() << std::endl;
+        std::shared_ptr<Person> voidperson4 = voidperson;
+        std::cout << voidperson.use_count() << std::endl;
+        
+    }
 }
